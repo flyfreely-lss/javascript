@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button id="button"></button>
+    <script>
+        Function.prototype.before = function (beforefn) {
+          var __self = this;
+          return function () {
+            beforefn.apply(this, arguments);
+            return __self.apply(this, arguments);
+          };
+        };
+        document.getElementById = document.getElementById.before(function () {
+          console.log(1);
+        });
+        var button = document.getElementById('button');
+        console.log(button);
+
+
+        window.onload = function(){
+          console.log (1);
+        };
+        var _onload = window.onload || function(){};
+        window.onload = function(){
+          _onload();
+          console.log (2);
+        };
+        //↓
+        Function.prototype.after = function( afterfn ){
+          var __self = this;
+          return function(){
+            var ret = __self.apply( this, arguments );
+            afterfn.apply( this, arguments );
+            return ret;
+          }
+        };
+        
+        window.onload = function () {
+          console.log('loaded...');
+        };
+        window.onload = ( window.onload || function() {} ).after(function () {
+          console.log(2);
+        }).after(function () {
+          console.log(3);
+        }).after(function () {
+          console.log(4);
+        });
+
+
+        //不污染原型的方式
+        var before = function( fn, beforefn ){
+          return function(){
+            beforefn.apply( this, arguments );
+            return fn.apply( this, arguments );
+          }
+        };
+        var a = before(
+          function(){alert (3)},
+          function(){alert (2)}
+        );
+        a = before( a, function(){alert (1);} );
+        a();
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a download="data.txt" id="getData">下载</a>
+
+<input type="file" accept="image/*" onchange="handleFile(this)" />
+<br/>
+<img style="width:200px;height:200px">
+<script>
+  /**
+   * 文件下载地址
+   * @type {string}
+   */
+  var data = 'Hello world!';
+  var blob = new Blob([data], {
+    type: 'text/html,charset=UTF-8'
+  });
+  window.URL = window.URL || window.webkitURL;
+  var url = URL.createObjectURL(blob);
+  document.querySelector('#getData').href = url;
+  //    URL.revokeObjectURL(url);
+
+
+  /**
+   * 图片资源地址
+   */
+  function handleFile(e) {
+    var file = e.files[0];
+    var blob = URL.createObjectURL(file);
+    var img = document.getElementsByTagName("img")[0];
+    img.src = blob;
+    img.onload = function(e) {
+      URL.revokeObjectURL(this.src);  // 释放createObjectURL创建的对象##
+    }
+  }
+</script>
+</body>
+</html>

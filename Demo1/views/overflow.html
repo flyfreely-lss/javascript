@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS实现隐藏滚动条同时又可以滚动</title>
+</head>
+<style>
+    .outer-container, .content {
+        width: 200px;
+        height: 200px;
+        background-color: #dedede;
+    }
+
+    .outer-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .inner-container {
+        position: absolute;
+        /*left: 0;*/
+        overflow: scroll;
+    }
+
+    /* for Chrome */
+    .inner-container::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+
+<body>
+<div class="outer-container">
+    <div class="inner-container">
+        <div class="content">
+            <p>营业场所名称： 高端网吧5号店</p>
+            <p>上网开始时间： 2017-05-05 15:00:00</p>
+            <p>上网结束时间： 2017-05-11 07:07:00</p>
+            <p>地址： 北京市朝阳区来广营创达三路5号院内</p>
+            <p>主机IP地址：</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

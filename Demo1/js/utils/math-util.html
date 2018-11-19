@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+  /**
+   * 是否为质数
+   * @param n
+   */
+  let isPrime = function ( n ) {
+    //参数检查
+    if( typeof n !== 'number' || !Number.isInteger( n )) {
+      return false;
+    }
+
+    if( n <= 3 ) {
+      return n > 1;
+    }
+    if( n % 2 === 0 || n % 3 === 0 ) {
+      return false;
+    }
+    for (let i = 5; i * i < n; i += 2) {
+      if( n % i === 0 ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  //test
+  console.log('1：', isPrime(1));
+  console.log('2：', isPrime(2));
+  console.log('3：', isPrime(3));
+  console.log('4：', isPrime(4));
+  console.log('5：', isPrime(5));
+  console.log('6：', isPrime(6));
+  console.log('7：', isPrime(7));
+  console.log('8：', isPrime(8));
+  console.log('9：', isPrime(9));
+  console.log('10：', isPrime(10));
+  console.log('101：', isPrime(101));
+  console.log('1001：', isPrime(1001));
+</script>
+</body>
+</html>

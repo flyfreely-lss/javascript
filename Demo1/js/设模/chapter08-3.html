@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    var salesOffices = {}; //售楼处
+
+    salesOffices.clientList = []; //缓存列表 存放订阅者的回调函数
+
+    salesOffices.listen = function ( key, fn ) {
+      if( !this.clientList[ key ] ) {
+        this.clientList[ key ] = [];
+      }
+      this.clientList[ key ].push( fn );
+    };
+
+    salesOffices.trigger = function () { // 发布消息
+      var key = Array.prototype.shift.call( arguments ),
+        fns = this.clientList[ key ];
+
+      if( !fns || fns.length === 0 ) {
+        return false;
+      }
+
+      for (var i = 0, fn; fn = fns[ i++ ];) {
+        fn.apply( this, arguments );
+      }
+    };
+
+    //测试
+    salesOffices.listen('squareMeter88', function ( price ) { //小红订阅消息
+      console.log( '价格= ' + price );
+    });
+
+    salesOffices.listen('squareMeter100', function ( price ) { //小明订阅消息
+      console.log( '价格= ' + price );
+    });
+
+    salesOffices.trigger( 'squareMeter100', 2000000 );
+    salesOffices.trigger( 'squareMeter88', 3000000 );
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<script>
+    /*
+    * 闭包的更多作用：
+    * 1. 封装变量
+    * 2. 延续局部变量的寿命
+    */
+
+    //1. 封装变量
+    //计算乘积的简单函数,加入缓存机制来提高这个函数的性能
+    var mult = (function () {
+      var cache = {};
+      var calculate = function () { //独立出来的小函数
+        var a = 1;
+        for(var i = 0, l = arguments.length; i < l; i++) {
+          a *= arguments[i];
+        }
+        return a;
+      };
+
+      return function () {
+        var args = Array.prototype.join.call(arguments, ',');
+        if(cache[args]) {
+          return cache[args];
+        }
+
+        return cache[args] = calculate.apply(null, arguments);
+      }
+    })();
+
+    console.log(mult(1, 2, 3));
+
+    //2. 延续局部变量的寿命
+    //img对象用于进行数据上报
+    var report = (function (src) {
+      var imgs = [];
+      return function () {
+        var img = new Image();
+        imgs.push(img);
+        img.src = src;
+      };
+    })();
+    report('http://xxx.com/getUserInfo');
+
+    /*
+    * 闭包和面向对象
+    */
+
+    //闭包写法
+    var extent = function () {
+      var value = 0;
+      return {
+        call: function () {
+          value ++;
+          console.log(value);
+        }
+      };
+    };
+    var ext = extent();
+    ext.call(); //1
+    ext.call();//2
+
+    //面向对象写法
+    var extent = {
+      value: 0,
+      call: function() {
+        this.value ++;
+        console.log(this.value);
+      }
+    };
+    //或者
+    var Extent = function () {
+      this.value = 0;
+    };
+
+    Extent.prototype.call = function () {
+      this.value++;
+      console.log(this.value);
+    };
+    var exte = new Extent();
+    exte.call();
+    exte.call();
+
+</script>

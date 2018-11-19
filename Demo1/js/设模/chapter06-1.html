@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>虚拟代理实现图片预加载</title>
+    <script>
+//      var myImage = (function () {
+//        var imgNode = document.createElement( 'img' );
+//        document.body.appendChild(imgNode);
+
+//        return {
+//          setSrc: function (src) {
+//            this.src = src;
+//          }
+//        };
+//      })();
+//
+//      var proxyImage = (function () {
+//        var img = new Image();
+//        img.onload = function () {
+//          myImage.setSrc( this.src );
+//        };
+//
+//        return {
+//          setSrc: function (src) {
+////            myImage.setSrc( '../../imgs/default.svg' );
+//            myImage.setSrc.call( this, '../../imgs/default.svg' );
+//            img.src = src;
+//          }
+//        };
+//      })();
+//
+//      proxyImage.setSrc( 'http://img.zcool.cn/community/0117e2571b8b246ac72538120dd8a4.jpg@1280w_1l_2o_100sh.jpg' );
+
+      var test = function (img, src) {
+        var _img = new Image();
+        _img.onload = function () {
+          img.src = this.src;
+        };
+
+        img.src = '../../imgs/default.svg';
+        _img.src = src;
+      }
+    </script>
+</head>
+<script>
+</script>
+<body>
+<img src="?" onerror="javascript:test(this, 'http://img.zcool.cn/community/0117e2571b8b246ac72538120dd8a4.jpg@1280w_1l_2o_100sh.jpg')" alt="占位符">
+
+
+</body>
+</html>

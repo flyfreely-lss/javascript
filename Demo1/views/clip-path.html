@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>clip-path demo</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing:border-box;
+        }
+        body {
+            font-size: 14px;
+            text-align: center;
+        }
+        .mark {
+            position: relative;
+            display: inline-block;
+            margin: 30px;
+        }
+        .mark-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .mark-decoration::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: '';
+            color: #a0ebfd;
+            width: 10px;
+            height: 1px;
+            background-color: currentColor;
+            transform: matrix(-0.707107, 0.707107, -0.707107, -0.707107, -5, 0);
+        }
+        .mark-decoration::after {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            content: '';
+            color: #a0ebfd;
+            width: 10px;
+            height: 1px;
+            background-color: currentColor;
+            transform: matrix(-0.707107, 0.707107, -0.707107, -0.707107, 5, 0);
+        }
+        .mark-body{
+            position: relative;
+            display: inline-block;
+            width: auto;
+            height: 30px;
+            padding: 0 10px;
+            line-height: 30px;
+            background-color: #0e2432;
+            border: 1px solid #2eb9e3;
+            color: #ff7364;
+            clip-path: polygon( 13.2% 0, 100% 0, 100% 66.7%, 86.8% 100%, 0 100%, 0 33.3% );
+        }
+        .mark-body::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            content: '';
+            background: #2eb9e3;
+            clip-path: polygon(13.2% 0, 0 33.3%, 0 0);
+        }
+        .mark-body::after {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            content: '';
+            background: #2eb9e3;
+            clip-path: polygon(100% 66.7%, 100% 100%, 86.8% 100%);
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="mark">
+        <span class="mark-body">恐怖分子</span>
+        <span class="mark-decoration"/>
+    </div>
+    <div class="mark">
+        <span class="mark-body">贩毒人员</span>
+        <span class="mark-decoration"/>
+    </div>
+    <div class="mark">
+        <span class="mark-body">重点人口库</span>
+        <span class="mark-decoration"/>
+    </div>
+</div>
+</body>
+</html>

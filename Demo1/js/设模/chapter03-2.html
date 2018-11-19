@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="div1">点我绑定事件</div>
+
+<script>
+  /*
+  * 高阶函数
+  * 1. 函数作为参数传递
+  *   - 1.1 回调函数: 当一个函数不适合执行某些请求的时候，我们可以把这些请求封装成一个函数，并把它作为参数传递给另外一个函数，即“委托”给另外一个函数来执行。
+  *   - 1.2 Array.prototype.sort: 目的是对数组进行排序，这是不变的部分；使用什么规则去排序是可变的部分；把可变的部分封装在函数参数里。
+  * 2. 函数作为返回值输出: 让函数返回一个可执行的函数，意味着运算过程是可延续的。
+  *   - 2.1 判断数据类型
+  *   - 2.2 getSingle
+  * 3. 高阶函数实现AOP
+  * 4. 高阶函数的其他应用
+  *   - 4.1 currying
+  *   - 4.2 uncurrying
+  *   - 4.3 函数节流
+  *   - 4.4 分时函数
+  *   - 4.5 惰性加载函数
+  */
+
+  //1.1 回调函数
+  //ajax异步请求应用
+  //    var getUserInfo = function (userId, callback) {
+  //      $.ajax('http://xxx.com/getUserInfo?' + userId, function (data) {
+  //        if(typeof callback === 'function') {
+  //          callback(data);
+  //        }
+  //      });
+  //    };
+  //
+  //    getUserInfo(1233, function (data) {
+  //      console.log(data);
+  //    });
+
+  //在页面中创建100个div节点
+  //    var appendDiv = function (callback) {
+  //      for(var i = 0; i < 100; i++) {
+  //        var div = document.createElement('div');
+  //        div.innerHTML = i;
+  //        document.body.appendChild(div);
+  //        if(typeof callback === 'function') {
+  //          callback(div);
+  //        }
+  //      }
+  //    };
+  //
+  //    appendDiv(function (node) {
+  //      node.style.display = 'none';
+  //    });
+
+
+  //1.2 Array.prototype.sort
+  //从小到大排序
+  [1, 4, 6, 3].sort(function (a, b) {
+    return a - b;
+  });
+
+  //2.1 判断数据类型
+  var isType = function(type) {
+    return function (obj) {
+      return Object.prototype.toString.call(obj) === '[object '+ type +']';
+    };
+  };
+  var isString = isType('String');
+  var isArray = isType('Array');
+  //循环语句，批量注册==>
+  var Type = {};
+  for(var i = 0, type; type = [ 'Array', 'String', 'Number' ][i++];) {
+    (function (type) {
+      Type['is' + type] = function (obj) {
+        return Object.prototype.toString.call(obj) === '[object '+ type +']';
+      };
+    })(type)
+  }
+  console.dir(Type);
+  console.log(Type.isArray([]));
+
+  //2.2 getSingle
+  var getSingle = function ( fn ) {
+    var ret;
+    return function () {
+      return ret || (ret = fn.apply(this, arguments));
+    };
+  };
+
+  var getScript = getSingle(function () {
+    return document.createElement('script');
+  });
+  var script1 = getScript();
+  var script2 = getScript();
+  console.log(script1 === script2);
+
+  //3. 高阶函数实现AOP
+  Function.prototype.before = function ( beforeFn ) {
+    var __self = this;
+    return function () {
+      beforeFn.apply(this, arguments);
+      return __self.apply(this, arguments);
+    };
+  };
+  Function.prototype.after = function ( afterFn ) {
+    var __self = this;
+    return function () {
+      var ret = __self.apply(this, arguments);
+      afterFn.apply(this, arguments);
+      return ret;
+    }
+  };
+  var func = function() {
+    console.log(2);
+  };
+  func = func.before(function () {
+    console.log(1);
+  }).after(function () {
+    console.log(3);
+  });
+  //    console.dir(func)
+  func();
+
+  //4. 高阶函数的其他应用
+  //4.1 currying
+  //4.2 uncurrying
+
+  /**
+   * 4.3 函数节流的实现
+   * @param fn 需要被延迟执行的函数
+   * @param internal 延迟执行的时间
+   * @returns {Function}
+   */
+  var throttle = function ( fn, internal ) {
+    var __self = fn,
+      firstTime = true;
+
+    return function () {
+      var __me = this,
+        args = arguments,
+        timer;
+
+      if(firstTime) {
+        __self.apply( __me, args );
+        return firstTime = false;
+      }
+
+      if( timer ) {
+        return false;
+      }
+
+      timer = setTimeout(function () {
+        clearTimeout( timer );
+        timer = null;
+        __self.apply( __me, args );
+      }, internal || 500);
+    }
+  };
+
+  window.onresize = throttle( function () {
+    console.log(1);
+  }, 500 );
+
+  /**
+   * 4.4 分时函数
+   * @param ary 创建节点时需要用到的数据
+   * @param fn 封装了创建节点逻辑的函数
+   * @param count 每一批创建的节点数量
+   */
+  var timeChunk = function ( ary, fn, count ) {
+    var obj,
+      t;
+
+    var start = function () {
+      for (var i = 0; i < Math.min( count || 1, ary.length ); i++) {
+        obj = ary.shift();
+        fn(obj);
+      }
+    };
+
+    return function () {
+      t = setInterval(function () {
+        if( ary.length === 0 ) {
+          return clearInterval( t );
+        }
+        start();
+      }, 200);
+    };
+  };
+
+  //测试
+  var ary = [];
+  for (var i = 0; i < 1000; i++) {
+    ary.push(i);
+  }
+
+  var renderFriendList = timeChunk( ary, function (data) {
+    for (var i = 0, l = ary.length; i < l; i++) {
+      var div = document.createElement('div');
+      div.innerHTML = i;
+      document.body.appendChild( div );
+    }
+  }, 8 );
+  renderFriendList();
+
+  /**
+   * 4.5 惰性加载函数
+   * @param ele
+   * @param type
+   * @param handler
+   */
+  var addEvent = function ( ele, type, handler ) {
+    if( window.addEventListener ) {
+      addEvent = function ( ele, type, handler ) {
+        ele.addEventListener( type, handler, false );
+      }
+    }else if ( window.attachEvent ) {
+      addEvent = function ( ele, type, handler ) {
+        ele.attachEvent( 'on' + type, handler );
+      }
+    }
+
+    addEvent( ele, type, handler );
+  };
+  var div = document.getElementById( 'div1' );
+  addEvent( div, 'click', function () {
+    alert(1);
+  } );
+  addEvent( div, 'click', function () {
+    alert(2);
+  } );
+
+</script>
+</body>
+</html>
