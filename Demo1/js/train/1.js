@@ -43,3 +43,15 @@ var bwm = new BWM('红色');
 bwm.sale();
 console.log(bwm);
 console.dir(Car);
+
+
+// 测试原型链
+function Foo() {
+
+}
+Foo.prototype.say = function(){
+  Console.log('hello');
+}
+var f1 = new Foo();
+console.log(f1);
+console.dir(f1.say);
