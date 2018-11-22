@@ -10,3 +10,14 @@ function test() {
     // console.log(numbers.reduce(getSum, 10));
 }
 test();
+
+// 测试原型链
+function Foo() {
+
+}
+Foo.prototype.say = function(){
+  Console.log('hello');
+}
+var f1 = new Foo();
+console.log(f1);
+console.dir(f1.say);
