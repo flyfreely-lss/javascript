@@ -277,3 +277,36 @@ var loserPromise = new Promise(function (resolve) {
 Promise.race([winnerPromise, loserPromise]).then(function (value) {
   console.log(value); // => 'this is winner'
 });
+
+
+// 不能进行错误处理的onRejected
+function throwError(value) {
+  // 抛出异常
+  throw new Error(value);
+}
+// <1> onRejected不会被调用
+function badMain(onRejected) {
+  return Promise.resolve(42).then(throwError, onRejected);
+}
+
+
+function testMain(onRejected) {
+  return Promise.resolve(42).then(throwError, onRejected).catch(onRejected);
+}
+
+
+// <2> 有异常发生时onRejected会被调用
+function goodMain(onRejected) {
+  return Promise.resolve(42).then(throwError).catch(onRejected);
+}
+// 运行示例
+badMain(function () {
+  console.log("BAD");
+});
+goodMain(function () {
+  console.log("GOOD");
+});
+
+testMain(function() {
+  console.log('test');
+});
